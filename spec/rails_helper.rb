@@ -73,3 +73,9 @@ def create_unapproved_company(name)
     zip_code_id: zip_code.id
   })
 end
+
+def create_note_with_company_and_user
+  user = User.create({username: 'tester', slack_uid: 'tester', slack_access_token: 1})
+  company = create(:company)
+  note = Note.create(title: "Solid Company", body: "They are solid.", user_id: user.id, company_id: company.id)
+end
