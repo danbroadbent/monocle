@@ -5,6 +5,7 @@ class User < ApplicationRecord
   validates_uniqueness_of :slack_uid
   has_many :starred_companies
   has_many :companies, through: :starred_companies
+  has_many :notes
 
   before_validation :set_role
 
