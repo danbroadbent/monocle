@@ -17,6 +17,8 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
-    resources :companies,       only: [:edit, :update]
+    resources :companies,       only: [:edit, :update] do
+      resources :notes,       only: [:edit, :update, :destroy]
+    end
   end
 end
