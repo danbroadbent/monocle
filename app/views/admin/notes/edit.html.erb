@@ -1,0 +1,9 @@
+<%= form_for @note, url: admin_company_note_path(@note) do |f| %>
+  <%= f.label :title %>
+  <%= f.text_field :title %>
+  
+  <%= f.label :body %>
+  <%= f.text_field :body %>
+  
+  <%= f.submit %>
+<% end %>
