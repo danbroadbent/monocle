@@ -67,6 +67,13 @@
           <p>
             <%= note.body %>
           </p>
+          <% if current_user.admin? %>
+            <h4>Administrator Tools</h4>
+            <ul>
+              <li><%= link_to 'Edit Note', edit_admin_company_note_path(note) %></li>
+              <li><%= link_to 'Delete Note', admin_company_note_path(note), :confirm => 'Are you sure?', :method => :delete %></li>
+            </ul>
+          <% end %>
         </div>
       </div>
     </div>
