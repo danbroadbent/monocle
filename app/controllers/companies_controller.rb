@@ -4,9 +4,6 @@ class CompaniesController < ApplicationController
 
   def index
     @companies = Company.filter(params.slice(:company_size, :industry_ids))
-    #@companies = Company.approved_companies.includes(:locations)
-    #@companies = @companies.company_size(params[:company_size]) if params[:company_size].present?
-    #@companies = @companies.industry_name(params[:industry_ids]) if params[:industry_ids].present?
     @industries = Industry.all
     @company_sizes = company_size_options
     raw_user_coordinates = request.location.coordinates

@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   get  '/sign_in_with_slack',     to: 'sessions#new'
   get  '/sign_in_with_census',    to: 'sessions#new'
   get  'companies/notes/delete',  to: 'notes#destroy'
+  get  'login',                   to: 'sessions#create'
 
   resources :companies,         only: [:index, :show, :new, :create] do
     resources :notes,           only: [:create, :edit, :update]

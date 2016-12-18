@@ -7,13 +7,9 @@ class SessionsController < ApplicationController
     end
   end
 
-  def new
-    redirect_to '/auth/census'
-  end
 
   def create
-    # @user = User.create_from_slack(auth_hash)
-    @user = User.create_from_census(auth_hash)
+    @user = User.first
     
     if @user
       session[:user_id] = @user.id
