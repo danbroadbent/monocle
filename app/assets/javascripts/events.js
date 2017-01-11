@@ -3,10 +3,13 @@ $(document).ready( function(){
   $("#create-note-button").on('click', prepareNoteCreate);
   $(".star").on("click", prepareStar);
   $(".unstar").on("click", prepareUnstar);
+  $(".star-job").on("click", prepareJobStar);
+  $(".unstar-job").on("click", prepareJobUnstar);
   $(".size-check-box").on("click", function(){
     $.get('/companies')
   });
   $(".btn-remove").on("click", removeCompany);
+  $(".btn-remove-job").on("click", removeJob);
   $(":checkbox").change(filterCompanies);
   $.when()
   .then(initMap)
@@ -74,6 +77,72 @@ function removeCompany() {
   })
 }
 
+function removeJob() {
+  var job = this.closest('.job')
+  var id = $(job).data('id')
+
+  $.ajax({
+    url: '/starred_jobs/' + id,
+    type: 'DELETE',
+    success: function(){ job.remove() }
+  })
+}
+function prepareJobStar() {
+  var jobId = $(this).data('id');
+  $.ajax({
+    url: "/starred_jobs",
+    method: "POST",
+    data: JSON.parse($('.job-data').text())
+  })
+  .done(function(){
+    $('.star-job').off();
+  })
+  .then(function(){
+    renderJobUnstar();
+  })
+  .then(function(){
+    $(".unstar-job").on("click", prepareJobUnstar);
+  })
+}
+
+function prepareJobUnstar() {
+  var jobId = $(this).data('id');
+  $.ajax({
+    url: "/starred_jobs/" + jobId,
+    method: "DELETE"
+  })
+  .done(function(){
+   $(".unstar-job").off(); 
+  })
+  .then(function(){
+    renderJobStar();
+  })
+  .then(function(){
+    $(".star-job").on("click", prepareJobStar);
+  })
+}
+
+function renderJobStar() {
+  $('.starred-message').html('');
+  $('.star-toggle').html('<span class="glyphicon glyphicon-star"></span> Star');
+  $('.star-toggle').removeClass('unstar-job').addClass('star-job');
+}
+
+function renderJobUnstar() {
+  $('.starred-message').html('<h4><i class="text-info"><span class="glyphicon glyphicon-star" aria-hidden="true"></span> This job has been saved in your starred list.</i></h4>')
+  $('.star-toggle').html('<span class="glyphicon glyphicon-star"></span> Unstar');
+  $('.star-toggle').removeClass('star-job').addClass('unstar-job');
+}
+function removeCompany() {
+  var company = this.closest('.card-holder')
+  var id = $(company).data('id')
+
+  $.ajax({
+    url: '/starred_companies/' + id,
+    type: 'DELETE',
+    success: function(){ company.remove() }
+  })
+}
 function addCards(companies) {
   companies.forEach(function (company, index){
     placeMapMarker(company, index);
@@ -198,16 +267,18 @@ function prepareNoteCreate(){
     var newNoteBody = $("#create-note-body");
     var user_id = $('#create-note-button').data('userId')
     var company_id = $('#create-note-button').data('companyId')
+    var author = $('#create-note-button').data('username')
     var note = { title: newNoteTitle.val(),
                          body: newNoteBody.val(),
                          user_id: user_id,
+                         author: author,
                          company_id: company_id}
     return $.ajax({
       url: "/companies/" + company_id + "/notes",
       method: "POST",
       data: {note: note}
     })
-    .done(renderNote(note))
+    .done(renderNote)
     .done(clearFields)
 }
 
@@ -225,7 +296,7 @@ function displayNotes(){
 }
 
 function renderNote(note){
-  var username = $('#create-note-button').data('username')
+  var author = note.author
   var userId = $('#create-note-button').data('userId')
   var company_id = $('#create-note-button').data('companyId')
   if (userId == note.user_id) {
@@ -237,7 +308,7 @@ function renderNote(note){
        <a class="delete-button btn btn-default btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
        </div>
         <div class='pull-left'>
-        <h6>Author:  ${username}</h6>
+        <h6>Author:  ${author}</h6>
         <h6>Title:  <span class="note-title" style="background-color:#fff">${note.title}</span></h6>
         <h6>Note:  <span class="note-body" style="background-color:#fff">${note.body}</span></h6>
         </div>
@@ -249,7 +320,7 @@ function renderNote(note){
         `<div class='note-block panel panel-default'>
           <div class='panel-body small'>
             <div class='pull-left'>
-              <h6>Author:  ${username}</h6>
+              <h6>Author:  ${author}</h6>
               <h6>Title:  ${note.title}</h6>
               <h6>Note:  ${note.body}</h6>
             </div>
