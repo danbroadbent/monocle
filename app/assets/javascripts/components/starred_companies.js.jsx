@@ -36,7 +36,7 @@ class StarredCompanies extends React.Component{
 const CompanyList = ({companies, remove}) => {
   return(
     <div>
-      { companies.map( company => <Company {...company} remove={ remove } />) }
+      { companies.map( company => <Company {...company} remove={ remove } key={ company.id }/>) }
     </div>
     )
 };
